@@ -6,6 +6,11 @@ const productSchema = mongoose.Schema(
       required: [true, 'Pleasae Enter PRoduct NAme'],
       trim: true,
     },
+    user: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'User',
+      required: true,
+    },
     description: {
       type: String,
       required: [true, 'Pleasae Enter PRoduct Description'],

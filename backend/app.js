@@ -2,12 +2,20 @@ import express, { urlencoded } from 'express';
 import dotenv from 'dotenv';
 const app = express();
 dotenv.config({ path: 'backend/config/config.env' });
-import product from './routes/productRoute.js';
+import cookieParser from 'cookie-parser';
+
+//import middleware
 import { errorMiddleware } from './middleware/error.js';
+
+//imports models
+import user from './routes/userRoute.js';
+import product from './routes/productRoute.js';
 app.use(express.json());
+app.use(cookieParser());
 //app.use(urlencoded(true));
 
 app.use('/api/v1', product);
+app.use('/api/v1', user);
 
 //middleware for Errors
 
