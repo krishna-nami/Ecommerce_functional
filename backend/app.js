@@ -10,12 +10,14 @@ import { errorMiddleware } from './middleware/error.js';
 //imports models
 import user from './routes/userRoute.js';
 import product from './routes/productRoute.js';
+import order from './routes/orderRoute.js';
 app.use(express.json());
 app.use(cookieParser());
 //app.use(urlencoded(true));
 
 app.use('/api/v1', product);
 app.use('/api/v1', user);
+app.use('/api/v1', order);
 
 //middleware for Errors
 

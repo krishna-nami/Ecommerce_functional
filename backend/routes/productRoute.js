@@ -5,6 +5,9 @@ import {
   updateProduct,
   deleteProduct,
   getProductDetails,
+  reviewCreate,
+  getProductReviews,
+  deleteReview,
 } from '../controllers/productController.js';
 import { authorizeduser, isAuthenticated } from '../middleware/auth.js';
 
@@ -19,5 +22,11 @@ router
   .patch(isAuthenticated, authorizeduser('admin'), updateProduct)
   .delete(isAuthenticated, authorizeduser('admin'), deleteProduct)
   .get(getProductDetails);
+
+router.route('/review').put(isAuthenticated, reviewCreate);
+router
+  .route('/reviews')
+  .get(getProductReviews)
+  .delete(isAuthenticated, deleteReview);
 
 export default router;
