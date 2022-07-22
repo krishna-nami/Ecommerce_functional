@@ -74,7 +74,7 @@ export const getAllOrdersAdmin = catchError(async (req, res, next) => {
   const orders = await Order.find();
 
   let totalAmount = 0;
-  off.forEach((order) => {
+  orders.forEach((order) => {
     totalAmount += order.totalPrice;
   });
 
@@ -87,15 +87,18 @@ export const getAllOrdersAdmin = catchError(async (req, res, next) => {
 
 //update order status --Admin Side
 export const updateOrderStatus = catchError(async (req, res, next) => {
-  console.log(req.user._id);
-  const order = await Order.find(req.params.id);
+  const order = await Order.findById(req.params.id);
+  if (!order) {
+    return next(new ErrorHandler('order not found', 404));
+  }
 
   if (order.orderStatus === 'Delivered') {
     return next(new ErrorHandler('you have already deliverd this order', 400));
   }
-  order.orderItems.forEach(async (order) => {
-    await updateStock(order.product, order.quantity);
+  order.orderItems.forEach(async (o) => {
+    await updateStock(o.product, o.quantity);
   });
+
   order.orderStatus = req.body.status;
   if (req.body.status === 'Delivered') {
     order.deliveredAt = Date.now();
@@ -112,13 +115,13 @@ export const updateOrderStatus = catchError(async (req, res, next) => {
 
 async function updateStock(id, quantity) {
   const product = await Product.findById(id);
-  product.stock -= quantity;
+  product.Stock -= quantity;
   await product.save({ validateBeforeSave: false });
 }
 
 //delete orders --admin
 export const deleteOrder = catchError(async (req, res, next) => {
-  const orders = await Order.findById(req.params.id);
+  const order = await Order.findById(req.params.id);
   if (!order) {
     return next(new ErrorHandler('order not found', 404));
   }
