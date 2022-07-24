@@ -48,7 +48,7 @@
   display: flex;
   flex-wrap: wrap;
   margin: 2vmax auto;
-  width: 80vmax;
+  width: 80vw;
   justify-content: center;
 }
 .productHeading {
@@ -61,26 +61,29 @@
   max-width: 100%;
 }
 
-/* Featured PRoduct */
+/* Featured PRoduct to create card */
 .card {
-  width: 15vmax;
+  width: 16vmax;
   display: flex;
+  flex-wrap: wrap;
   flex-direction: column;
   text-decoration: none;
   color: rgb(48, 48, 48);
   margin: 2vmax;
   padding-bottom: 0.5vmax;
+  transition: all 0.5s;
 }
 .card > img {
-  width: 15vmax;
+  width: 16vmax;
 }
 .card > div {
   font-size: 1.2vmax;
   display: flex;
   justify-content: flex-start;
+  margin: 0.5vmax;
 }
 .card > div > span {
-  margin: 0.9vmax 0;
+  margin: 0.5vmax;
   font: 300 0.7vmax 'Roboto';
 }
 .card > p {

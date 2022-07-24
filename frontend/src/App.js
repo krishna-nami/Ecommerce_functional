@@ -6,8 +6,10 @@ import React, { useEffect } from 'react';
 import Header from './components/layout/Header/Header';
 import Footer from './components/layout/Footer/Footer';
 import Home from './components/Home/Home';
+import Loading from './components/layout/Loader/Loading';
+import ProductDetials from './components/Product/ProuctDetials.js';
 
-function App() {
+const App = () => {
   useEffect(() => {
     WebFont.load({
       google: {
@@ -21,11 +23,13 @@ function App() {
         <Header />
         <Routes>
           <Route path="/" element={<Home />} exact />
+          <Route exact path="/load" element={<Loading />} />
+          <Route path="/product/:id" element={<ProductDetials />} />
         </Routes>
         <Footer />
       </Router>
     </div>
   );
-}
+};
 
 export default App;
