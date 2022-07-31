@@ -8,14 +8,22 @@ const initialState = {
   isSuccess: false,
   isLoading: false,
   message: '',
-  productcount: null,
+  productCount: '',
+  resultPerPage: '',
 };
 
+//action to get all products
 export const getProducts = createAsyncThunk(
   'products/get',
-  async (_, thunkAPI) => {
+  async ({ keyword, ...parameter }, thunkAPI) => {
     try {
-      return await productService.getProducts();
+      return await productService.getProducts(
+        keyword ? keyword : '',
+        parameter.currentPage ? parameter.currentPage : 1,
+        parameter.price ? parameter.price : [0, 500],
+        parameter.category ? parameter.category : '',
+        parameter.rating ? parameter.rating : 0
+      );
     } catch (error) {
       const message =
         (error.response &&
@@ -27,11 +35,12 @@ export const getProducts = createAsyncThunk(
     }
   }
 );
-//needs authorization
+//aton to get product detials
 export const getProduct = createAsyncThunk(
   'product/get',
   async (productId, thunkAPI) => {
     try {
+      console.log('is working');
       return await productService.getProduct(productId);
     } catch (error) {
       const message =
@@ -44,6 +53,8 @@ export const getProduct = createAsyncThunk(
     }
   }
 );
+
+// method to export actios and reducers
 const productSlice = createSlice({
   name: 'product',
   initialState,
@@ -60,6 +71,7 @@ const productSlice = createSlice({
         state.isSuccess = true;
         state.products = action.payload.products;
         state.productCount = action.payload.productCount;
+        state.resultPerPage = action.payload.resultPerPage;
       })
       .addCase(getProducts.rejected, (state, action) => {
         state.isLoading = false;
@@ -72,11 +84,13 @@ const productSlice = createSlice({
       .addCase(getProduct.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
-        state.product = action.payload.products;
+        state.product = action.payload.product;
       })
       .addCase(getProduct.rejected, (state, action) => {
         state.isLoading = false;
+        state.isSuccess = false;
         state.isError = true;
+
         state.message = action.payload;
       });
   },

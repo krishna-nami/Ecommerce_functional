@@ -5,18 +5,29 @@ import { toast } from 'react-toastify';
 import './Home.css';
 import Product from './Product.js';
 import MetaData from '../layout/MetaData';
-import { getProducts } from '../../reduxFeature/features/product/prouctSlice';
+import {
+  getProducts,
+  reset,
+} from '../../reduxFeature/features/product/prouctSlice';
 import Loading from '../layout/Loader/Loading';
-import isEmail from 'validator/lib/isEmail';
 
 const Home = () => {
-  const { products, isLoading, isSuccess, productsCount, isError, message } =
-    useSelector((state) => state.products);
+  const { products, isLoading, isSuccess, isError, message } = useSelector(
+    (state) => state.products
+  );
   const dispatch = useDispatch();
+
+  //use Effect to to triger triger actions
   useEffect(() => {
-    dispatch(getProducts());
+    dispatch(getProducts('', '', '', '', ''));
+
     if (isError) toast.error(message);
-  }, [dispatch]);
+    return () => {
+      if (isSuccess) {
+        dispatch(reset());
+      }
+    };
+  }, [dispatch, isSuccess, isError, message]);
 
   if (isLoading) return <Loading />;
 

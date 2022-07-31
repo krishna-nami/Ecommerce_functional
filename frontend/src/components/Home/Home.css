@@ -63,24 +63,25 @@
 
 /* Featured PRoduct to create card */
 .card {
-  width: 16vmax;
+  width: 14vmax;
   display: flex;
   flex-wrap: wrap;
   flex-direction: column;
   text-decoration: none;
   color: rgb(48, 48, 48);
-  margin: 2vmax;
+  margin: 1.5vmax;
   padding-bottom: 0.5vmax;
   transition: all 0.5s;
 }
 .card > img {
-  width: 16vmax;
+  width: 14vmax;
 }
 .card > div {
   font-size: 1.2vmax;
   display: flex;
   justify-content: flex-start;
   margin: 0.5vmax;
+  width: 100%;
 }
 .card > div > span {
   margin: 0.5vmax;
