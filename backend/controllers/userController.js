@@ -3,18 +3,23 @@ import catchError from '../middleware/asyncErrorsHandler.js';
 import User from '../models/userModel.js';
 import getToken from '../utils/getToken.js';
 import sendEmail from '../utils/sendEmail.js';
-import { isGeneratorFunction } from 'util/types';
+import coludinary from 'cloudinary';
 
 //Regiseter user--everyone
 export const createUser = catchError(async (req, res, next) => {
+  const mycloud = await coludinary.v2.uploader.upload(req.body.avatar, {
+    folder: 'avatars',
+    width: 150,
+    crop: 'scale',
+  });
   const { name, email, password } = req.body;
   const user = await User.create({
     name,
     email,
     password,
     userImage: {
-      public_id: 'this is id',
-      url: 'this is url',
+      public_id: mycloud.public_id,
+      url: mycloud.secure_url,
     },
   });
   getToken(user, 201, res);
@@ -49,7 +54,7 @@ export const logout = catchError(async (req, res, next) => {
     httpOnly: true,
   });
   res.status(200).json({
-    succes: true,
+    success: true,
     message: 'logged Out',
   });
 });

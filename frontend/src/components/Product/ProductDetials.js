@@ -45,14 +45,14 @@ const ProuctDetials = () => {
             <div>
               <Carousel>
                 {product.images &&
-                  product.images.map((item, i) => {
+                  product.images.map((item, i) => (
                     <img
                       className="CarouselImg"
                       src={item.url}
                       key={item.url}
                       alt={`${i} Slide`}
-                    />;
-                  })}
+                    />
+                  ))}
               </Carousel>
             </div>
             <div>

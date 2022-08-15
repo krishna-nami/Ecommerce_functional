@@ -4,42 +4,45 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 
-const userSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: [true, 'Please Enter your name'],
-    maxLength: [30, 'maxmium name cann;t cross 30 characters'],
-    minLength: [4, 'Name should have more than 5 characters'],
-  },
-  email: {
-    type: String,
-    required: [true, 'Please Enter your email'],
-    unique: true,
-    validate: [validator.isEmail, 'Please Enter valid Email'],
-  },
-  password: {
-    type: String,
-    required: [true, 'Please Enter your Password'],
-    minLength: [8, 'Password shloud more than 8 characters'],
-    select: false,
-  },
-  userImage: {
-    public_id: {
+const userSchema = new mongoose.Schema(
+  {
+    name: {
       type: String,
-      required: true,
+      required: [true, 'Please Enter your name'],
+      maxLength: [30, 'maxmium name cann;t cross 30 characters'],
+      minLength: [4, 'Name should have more than 5 characters'],
     },
-    url: {
+    email: {
       type: String,
-      required: true,
+      required: [true, 'Please Enter your email'],
+      unique: true,
+      validate: [validator.isEmail, 'Please Enter valid Email'],
     },
+    password: {
+      type: String,
+      required: [true, 'Please Enter your Password'],
+      minLength: [8, 'Password shloud more than 8 characters'],
+      select: false,
+    },
+    userImage: {
+      public_id: {
+        type: String,
+        required: true,
+      },
+      url: {
+        type: String,
+        required: true,
+      },
+    },
+    role: {
+      type: String,
+      default: 'user',
+    },
+    resetPasswordToken: String,
+    resetPasswordExpire: Date,
   },
-  role: {
-    type: String,
-    default: 'user',
-  },
-  resetPasswordToken: String,
-  resetPasswordExpire: Date,
-});
+  { timestamps: true }
+);
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) {
     next();
