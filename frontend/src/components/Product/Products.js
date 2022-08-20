@@ -19,9 +19,6 @@ const Products = () => {
   const [rating, setRating] = useState(0);
   const dispatch = useDispatch();
   const { keyword } = useParams();
-  console.log(products);
-  let count = products.length;
-  console.log(count);
 
   const setCurrentPageNo = (e) => {
     setCurrentPage(e);
@@ -34,12 +31,6 @@ const Products = () => {
   };
 
   useEffect(() => {
-    if (isError) {
-      toast.error(message);
-      console.log(message);
-    }
-    console.log('product in' + currentPage);
-
     dispatch(getProducts({ keyword, currentPage, price, category, rating }));
   }, [
     message,
@@ -62,6 +53,9 @@ const Products = () => {
     'Mobile',
     'Electronics',
   ];
+  if (isError) {
+    toast.error(message);
+  }
 
   return (
     <>

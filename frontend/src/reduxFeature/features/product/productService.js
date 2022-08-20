@@ -2,15 +2,12 @@ import axios from 'axios';
 
 const getProducts = async (keyword, currentPage, price, category, rating) => {
   let link;
-  console.log(currentPage, price, category, rating);
 
   if (category) {
     link = `/api/v1/products?keyword=${keyword}&page=${currentPage}&price[gte]=${price[0]}&price[lte]=${price[1]}&category=${category}&ratings[gte]=${rating}`;
   } else {
     link = `/api/v1/products?keyword=${keyword}&page=${currentPage}&price[gte]=${price[0]}&price[lte]=${price[1]}&ratings[gte]=${rating}`;
   }
-
-  console.log(link);
 
   const { data } = await axios.get(link);
   return data;

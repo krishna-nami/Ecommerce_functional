@@ -7,7 +7,7 @@ import PersonIcon from '@material-ui/icons/Person';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import ListAltIcon from '@material-ui/icons/ListAlt';
 
-import { SpeedDial, SpeedDialAction } from '@mui/lab';
+import { SpeedDial, SpeedDialAction } from '@mui/material';
 import { logOut } from '../../../reduxFeature/features/User/userSlice';
 
 const UserOptions = ({ user }) => {
@@ -65,6 +65,7 @@ const UserOptions = ({ user }) => {
             icon={item.icon}
             tooltipTitle={item.name}
             onClick={item.func}
+            key={item.name}
           />
         ))}
       </SpeedDial>

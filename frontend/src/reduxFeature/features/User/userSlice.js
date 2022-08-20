@@ -7,12 +7,12 @@ const initialState = {
   user: user ? user : '',
   isError: false,
   isAuth: false,
+  isUpdated: false,
   isLoading: false,
   message: '',
 };
 
 export const login = createAsyncThunk('auth/login', async (user, thunkAPI) => {
-  console.log(user);
   try {
     return await userService.login(user);
   } catch (error) {
@@ -23,13 +23,61 @@ export const login = createAsyncThunk('auth/login', async (user, thunkAPI) => {
     return thunkAPI.rejectWithValue(message);
   }
 });
+export const update = createAsyncThunk(
+  'auth/update',
+  async (user, thunkAPI) => {
+    try {
+      return await userService.update(user);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+export const loadUser = createAsyncThunk(
+  'auth/loadUser',
+  async (public_id, thunkAPI) => {
+    try {
+      return await userService.loadUser();
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+export const updatePassword = createAsyncThunk(
+  'auth/updatePass',
+  async (passObj, thunkAPI) => {
+    try {
+      console.log(...passObj);
+      return await userService.updatePassword(passObj);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
 export const logOut = createAsyncThunk('auth/logout', async () => {
   return await userService.logout();
 });
 export const register = createAsyncThunk(
   'auth/register',
   async (newUser, thunkAPI) => {
-    console.log(newUser);
     try {
       return await userService.register(newUser);
     } catch (error) {
@@ -89,8 +137,66 @@ const authSlice = createSlice({
       .addCase(logOut.fulfilled, (state) => {
         state.user = null;
         state.isAuth = false;
+      })
+      .addCase(update.pending, (state) => {
+        state.isLoading = true;
+        state.isAuth = false;
+        state.isError = false;
+      })
+      .addCase(update.fulfilled, (state) => {
+        state.isLoading = false;
+        state.isAuth = true;
+        state.isUpdated = true;
+        state.isError = false;
+        state.message = '';
+      })
+      .addCase(update.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isAuth = false;
+        state.isError = true;
+        state.message = action.payload;
+      })
+      .addCase(updatePassword.pending, (state) => {
+        state.isLoading = true;
+        state.isAuth = false;
+        state.isError = false;
+        state.isUpdated = false;
+      })
+      .addCase(updatePassword.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isUpdated = true;
+        state.isError = false;
+        state.user = action.payload;
+      })
+      .addCase(updatePassword.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isAuth = false;
+        state.isError = true;
+        state.message = action.payload;
+      })
+      .addCase(loadUser.pending, (state) => {
+        state.isLoading = true;
+        state.isAuth = false;
+        state.isError = false;
+      })
+
+      .addCase(loadUser.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isAuth = true;
+        state.isUpdated = false;
+        state.isError = false;
+        state.message = '';
+        state.user = action.payload;
+      })
+      .addCase(loadUser.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isAuth = false;
+        state.isError = true;
+        state.message = action.payload;
+        state.user = '';
       });
   },
 });
+export const { reset } = authSlice.actions;
 
 export default authSlice.reducer;

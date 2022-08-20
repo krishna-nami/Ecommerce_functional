@@ -17,8 +17,12 @@ import Contact from './components/Home/Contact';
 import About from './components/Home/About';
 import './Header.css';
 import { useSelector } from 'react-redux';
-import Profile from './components/Home/Profile';
+import Profile from './components/User/Profile';
 import ProtectedRoute from './components/Route/ProtectedRoute';
+import UpdateProfile from './components/User/UpdateProfile';
+import UpdatePassword from './components/User/UpdatePassword';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const App = () => {
   const { user } = useSelector((state) => state.auth);
@@ -46,12 +50,19 @@ const App = () => {
           <Route exact path="/profile" element={<ProtectedRoute />}>
             <Route exact path="/profile" element={<Profile />} />
           </Route>
+          <Route exact path="/me/update" element={<ProtectedRoute />}>
+            <Route exact path="/me/update" element={<UpdateProfile />} />
+          </Route>
+          <Route exact path="/password/update" element={<ProtectedRoute />}>
+            <Route exact path="/password/update" element={<UpdatePassword />} />
+          </Route>
 
           <Route path="/contact" element={<Contact />} exact />
           <Route path="/about" element={<About />} exact />
         </Routes>
         <Footer />
       </Router>
+      <ToastContainer limit={2} />
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useParams } from 'react-router-dom';
 import Carousel from 'react-material-ui-carousel';
@@ -12,9 +12,10 @@ import { getProduct } from '../../reduxFeature/features/product/prouctSlice';
 import Loading from '../layout/Loader/Loading';
 
 const ProuctDetials = () => {
-  const { isError, isLoading, message, product } = useSelector(
+  const { isError, isLoading, product } = useSelector(
     (state) => state.products
   );
+  const [quantity, setQuantity] = useState(1);
   const options = {
     edit: false,
     color: 'rgba(20, 20, 20, 0.2)',
@@ -28,12 +29,24 @@ const ProuctDetials = () => {
   const { id } = useParams();
 
   useEffect(() => {
-    if (isError) {
-      toast.error(message);
-    }
-
     dispatch(getProduct(id));
-  }, [isError, message, id, dispatch]);
+  }, [id, dispatch]);
+
+  const increment = () => {
+    if (quantity >= product.Stock) {
+      toast.warning('Sorry, We dont have more items in stock');
+      return;
+    } else {
+      setQuantity(quantity + 1);
+    }
+  };
+  const decrement = () => {
+    if (quantity < 1) {
+      toast.warning('cart cannot have negative value', { autoclose: 2000 });
+      return;
+    }
+    setQuantity(quantity - 1);
+  };
 
   return (
     <>
@@ -68,9 +81,9 @@ const ProuctDetials = () => {
                 <h1>${product.price}</h1>
                 <div className="detailsBlock-3-1">
                   <div className="detailsBlock-3-1-1">
-                    <button>-</button>
-                    <input type="number" value="1" />
-                    <button>+</button>
+                    <button onClick={decrement}>-</button>
+                    <input type="number" value={quantity} readOnly />
+                    <button onClick={increment}>+</button>
                   </div>
                   <button>Add to Cart</button>
                 </div>

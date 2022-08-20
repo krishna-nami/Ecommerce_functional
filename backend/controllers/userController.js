@@ -131,7 +131,7 @@ export const resetPassword = catchError(async (req, res, next) => {
 export const getUserDetails = catchError(async (req, res, next) => {
   const user = await User.findById(req.user.id);
   res.status(200).json({
-    succes: true,
+    success: true,
     user,
   });
 });
@@ -162,7 +162,20 @@ export const updateUserDetails = catchError(async (req, res, next) => {
     name: req.body.name,
     email: req.body.email,
   };
-
+  if (req.body.avatar !== '') {
+    const user = await User.findById(req.user.id);
+    const imageId = user.userImage.public_id;
+    await coludinary.v2.uploader.destroy(imageId);
+    const myCloud = await coludinary.v2.uploader.upload(req.body.avatar, {
+      folder: 'avatars',
+      width: 150,
+      crop: 'scale',
+    });
+    newUserDetails.userImage = {
+      public_id: myCloud.public_id,
+      url: myCloud.secure_url,
+    };
+  }
   //We will update image later
 
   const user = await User.findByIdAndUpdate(req.user.id, newUserDetails, {
@@ -173,7 +186,6 @@ export const updateUserDetails = catchError(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
-    message: 'user Updated Successfylly',
   });
 });
 
