@@ -36,6 +36,7 @@ const options = {
   CartIconElement: FaCartPlus,
   profileIcon: true,
   profileIconUrl: '/login',
+  cartIconUrl: '/cart',
   ProfileIconElement: FaUserAlt,
   profileIconColor: 'rgba(35,35,35,0.8)',
   searchIconColor: 'rgba(35,35,35,0.8)',

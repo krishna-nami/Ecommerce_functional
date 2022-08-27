@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import './LoginRegister.css';
 import MailOutlineIcon from '@material-ui/icons/MailOutline';
 import LockOpenIcon from '@material-ui/icons/LockOpen';
@@ -14,6 +14,9 @@ const LoginRegister = () => {
   );
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { search } = useLocation();
+  const redirectUrl = new URLSearchParams(search).get('redirect');
+  const redirect = redirectUrl ? redirectUrl : '/profile';
 
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
@@ -46,15 +49,16 @@ const LoginRegister = () => {
       loginTab.current.classList.add('shiftToLeft');
     }
   };
+
   useEffect(() => {
     if (user) {
-      navigate('/profile');
+      navigate(redirect);
     }
 
     if (isError) {
       alert(message);
     }
-  }, [isError, message, navigate, user]);
+  }, [isError, message, navigate, user, redirect]);
   const loginSubmit = (e) => {
     e.preventDefault();
     const userData = {
@@ -62,7 +66,6 @@ const LoginRegister = () => {
       password: loginPassword,
     };
     dispatch(login(userData));
-    console.log(userData);
   };
   const registerSubmit = (e) => {
     e.preventDefault();

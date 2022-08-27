@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import PersonIcon from '@material-ui/icons/Person';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import ListAltIcon from '@material-ui/icons/ListAlt';
+import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 
 import { SpeedDial, SpeedDialAction } from '@mui/material';
 import { logOut } from '../../../reduxFeature/features/User/userSlice';
@@ -14,10 +15,20 @@ const UserOptions = ({ user }) => {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { cartItems } = useSelector((state) => state.cart);
 
   const options = [
     { icon: <ListAltIcon />, name: 'Orders', func: orders },
     { icon: <PersonIcon />, name: 'Profile', func: account },
+    {
+      icon: (
+        <ShoppingCartIcon
+          style={{ color: cartItems.length > 0 ? 'tomato' : 'unset' }}
+        />
+      ),
+      name: `Cart(${cartItems.length})`,
+      func: cart,
+    },
     { icon: <ExitToAppIcon />, name: 'Logout', func: logoutUser },
   ];
   if (user.role === 'admin') {
@@ -40,6 +51,9 @@ const UserOptions = ({ user }) => {
     dispatch(logOut());
     navigate('/');
     alert('Logut Succesfully');
+  }
+  function cart() {
+    navigate('/cart');
   }
 
   return (

@@ -5,6 +5,7 @@ import Carousel from 'react-material-ui-carousel';
 import { useSelector, useDispatch } from 'react-redux';
 import Rating from 'react-rating-stars-component';
 import ReviewCard from './ReviewCard.js';
+import { addToCart } from '../../reduxFeature/features/order/cartSlice.js';
 
 //import custom files
 import './productDetials.css';
@@ -15,6 +16,7 @@ const ProuctDetials = () => {
   const { isError, isLoading, product } = useSelector(
     (state) => state.products
   );
+  const { cartItems } = useSelector((state) => state.cart);
   const [quantity, setQuantity] = useState(1);
   const options = {
     edit: false,
@@ -46,6 +48,20 @@ const ProuctDetials = () => {
       return;
     }
     setQuantity(quantity - 1);
+  };
+
+  const payload = {
+    id: product._id,
+    name: product.name,
+    image: product.images,
+    quantity,
+    stock: product.Stock,
+    price: product.price,
+  };
+
+  const addingToCart = () => {
+    dispatch(addToCart(payload));
+    toast.success('Item added to Cart Successfully');
   };
 
   return (
@@ -85,7 +101,7 @@ const ProuctDetials = () => {
                     <input type="number" value={quantity} readOnly />
                     <button onClick={increment}>+</button>
                   </div>
-                  <button>Add to Cart</button>
+                  <button onClick={addingToCart}>Add to Cart</button>
                 </div>
 
                 <p>
