@@ -3,28 +3,41 @@ import { toast } from 'react-toastify';
 import { useParams } from 'react-router-dom';
 import Carousel from 'react-material-ui-carousel';
 import { useSelector, useDispatch } from 'react-redux';
-import Rating from 'react-rating-stars-component';
+
 import ReviewCard from './ReviewCard.js';
 import { addToCart } from '../../reduxFeature/features/order/cartSlice.js';
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Button,
+} from '@material-ui/core';
+import { Rating } from '@material-ui/lab';
 
 //import custom files
 import './productDetials.css';
-import { getProduct } from '../../reduxFeature/features/product/prouctSlice';
+import {
+  getProduct,
+  submitReview,
+} from '../../reduxFeature/features/product/prouctSlice';
 import Loading from '../layout/Loader/Loading';
 
 const ProuctDetials = () => {
   const { isError, isLoading, product } = useSelector(
     (state) => state.products
   );
-  const { cartItems } = useSelector((state) => state.cart);
+
   const [quantity, setQuantity] = useState(1);
+  const [rating, setRating] = useState('');
+  const [comment, setComment] = useState('');
+  const [open, setOpen] = useState(false);
+
   const options = {
-    edit: false,
-    color: 'rgba(20, 20, 20, 0.2)',
-    activeColor: 'tomato',
-    size: window.innerWidth < 600 ? 12 : 15,
+    size: 'large',
     value: product.ratings,
-    isHalf: true,
+    readOnly: true,
+    precision: 0.5,
   };
 
   const dispatch = useDispatch();
@@ -50,18 +63,30 @@ const ProuctDetials = () => {
     setQuantity(quantity - 1);
   };
 
-  const payload = {
-    id: product._id,
-    name: product.name,
-    image: product.images,
-    quantity,
-    stock: product.Stock,
-    price: product.price,
-  };
-
   const addingToCart = () => {
+    const payload = {
+      id: product._id,
+      name: product.name,
+      image: product.images,
+      quantity,
+      stock: product.Stock,
+      price: product.price,
+    };
     dispatch(addToCart(payload));
     toast.success('Item added to Cart Successfully');
+  };
+  const submitReviewToggle = () => {
+    open ? setOpen(false) : setOpen(true);
+  };
+  const reviewSubmit = () => {
+    const myForm = new FormData();
+    myForm.set('rating', rating);
+    myForm.set('comment', comment);
+    myForm.set('productId', id);
+
+    dispatch(submitReview(myForm));
+    setOpen(false);
+    dispatch(getProduct(id));
   };
 
   return (
@@ -89,9 +114,12 @@ const ProuctDetials = () => {
                 <h2>{product.name}</h2>
                 <p>Product # {product._id}</p>
               </div>
+
               <div className="detailsBlock-2">
                 <Rating {...options} />
-                <span>({product.numofReviews} Reviews)</span>
+                <span className="detailsBlock-2-span">
+                  ({product.numofReviews} Reviews)
+                </span>
               </div>
               <div className="detailsBlock-3">
                 <h1>${product.price}</h1>
@@ -127,16 +155,54 @@ const ProuctDetials = () => {
               <div className="detailsBlock-4">
                 Description: <p>{product.description}</p>
               </div>
-              <button className="submitReview"> Submit Review</button>
+              <button onClick={submitReviewToggle} className="submitReview">
+                {' '}
+                Create Review
+              </button>
             </div>
           </div>
           <h1 className="reviewTitle">Reviews</h1>
+
+          <Dialog
+            aria-labelledby="simple-dialog-title"
+            open={open}
+            onClose={submitReviewToggle}
+          >
+            <DialogTitle>Submit Your Review</DialogTitle>
+            <DialogContent className="SubmitDialog">
+              <Rating
+                value={rating}
+                onChange={(e) => setRating(e.target.value)}
+              />
+              <textarea
+                className="submitDialogTextArea"
+                cols="30"
+                rows="5"
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+              />
+              <DialogActions>
+                <Button
+                  color="secondary"
+                  variant="contained"
+                  onClick={submitReviewToggle}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  color="primary"
+                  variant="contained"
+                  onClick={reviewSubmit}
+                >
+                  Submit
+                </Button>
+              </DialogActions>
+            </DialogContent>
+          </Dialog>
           {product.reviews && product.reviews[0] ? (
             <div className="reviews">
               {product.reviews &&
-                product.reviews.map((review) => (
-                  <ReviewCard review={review} />
-                ))}{' '}
+                product.reviews.map((review) => <ReviewCard review={review} />)}
             </div>
           ) : (
             <p className="noReviews"> No Review Yet</p>

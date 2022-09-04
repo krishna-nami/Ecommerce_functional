@@ -52,6 +52,22 @@ export const getProduct = createAsyncThunk(
     }
   }
 );
+export const submitReview = createAsyncThunk(
+  'review/post',
+  async (data, thunkAPI) => {
+    try {
+      return await productService.createReview(data);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
 
 // method to export actios and reducers
 const productSlice = createSlice({
@@ -79,6 +95,8 @@ const productSlice = createSlice({
       })
       .addCase(getProduct.pending, (state) => {
         state.isLoading = true;
+        state.isSuccess = false;
+        state.product = {};
       })
       .addCase(getProduct.fulfilled, (state, action) => {
         state.isLoading = false;

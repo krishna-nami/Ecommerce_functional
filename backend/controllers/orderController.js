@@ -15,7 +15,7 @@ export const newOrder = catchError(async (req, res, next) => {
     shippingPrice,
     totalPrice,
   } = req.body;
-
+  console.log(typeof shippingInfo.phone);
   const order = await Order.create({
     shippingInfo,
     orderItems,
@@ -70,7 +70,6 @@ export const getAllOrders = catchError(async (req, res, next) => {
 //get all orders for --Admin side
 
 export const getAllOrdersAdmin = catchError(async (req, res, next) => {
-  console.log(req.user._id);
   const orders = await Order.find();
 
   let totalAmount = 0;

@@ -17,5 +17,9 @@ const getProduct = async (productId) => {
   const { data } = await axios.get('/api/v1/product/' + productId);
   return data;
 };
-const productService = { getProducts, getProduct };
+const createReview = async (reviewData) => {
+  const { data } = await axios.put('/api/v1/review', reviewData);
+  console.log(data);
+};
+const productService = { getProducts, getProduct, createReview };
 export default productService;

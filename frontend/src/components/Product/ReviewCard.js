@@ -1,16 +1,14 @@
 import React from 'react';
 
-import Rating from 'react-rating-stars-component';
+import { Rating } from '@material-ui/lab';
 import profilePng from '../../images/Profile.png';
 
 const ReviewCard = ({ review }) => {
   const options = {
-    edit: false,
-    color: 'rgba(20, 20, 20, 0.2)',
-    activeColor: 'tomato',
-    size: window.innerWidth < 600 ? 12 : 15,
     value: review.rating,
-    isHalf: true,
+    size: 'small',
+    readOnly: true,
+    precision: 0.5,
   };
 
   return (

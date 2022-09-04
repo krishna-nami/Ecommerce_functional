@@ -1,4 +1,5 @@
 import './App.css';
+
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import WebFont from 'webfontloader';
 import React, { useEffect, useState } from 'react';
@@ -26,8 +27,13 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Shipping from './components/Cart/Shipping';
 import ConfirmOrder from './components/Cart/ConfirmOrder';
+import MyOrders from './components/Cart/MyOrders';
+import OrderDetails from './components/Cart/OrderDetails';
+import Dashboard from './components/admin/Dashboard';
 import axios from 'axios';
 import Payment from './components/Cart/Payment';
+import { Elements } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
 
 const App = () => {
   const { user } = useSelector((state) => state.auth);
@@ -45,6 +51,7 @@ const App = () => {
     });
     getStripeKey();
   }, []);
+
   return (
     <div>
       <Router>
@@ -78,10 +85,32 @@ const App = () => {
           <Route exact path="/order/confirm" element={<ProtectedRoute />}>
             <Route exact path="/order/confirm" element={<ConfirmOrder />} />
           </Route>
-          <Route exact path="/process/payment" element={<ProtectedRoute />}>
-            <Route exact path="/process/payment" element={<Payment />} />
+          <Route
+            exact
+            path="/process/payment"
+            element={<ProtectedRoute />}
+          ></Route>
+          <Route exact path="/orders" element={<ProtectedRoute />}>
+            <Route exact path="/orders" element={<MyOrders />} />
+          </Route>
+          <Route exact path="/order/:id" element={<ProtectedRoute />}>
+            <Route exact path="/order/:id" element={<OrderDetails />} />
+          </Route>
+          <Route exact path="/admin/dashboard" element={<ProtectedRoute />}>
+            <Route exact path="/admin/dashboard" element={<Dashboard />} />
           </Route>
         </Routes>
+
+        {stripeKey && (
+          <Elements stripe={loadStripe(stripeKey)}>
+            <Routes>
+              <Route exact path="/process/payment" element={<ProtectedRoute />}>
+                <Route exact path="/process/payment" element={<Payment />} />
+              </Route>
+            </Routes>
+          </Elements>
+        )}
+
         <Footer />
       </Router>
       <ToastContainer limit={2} />

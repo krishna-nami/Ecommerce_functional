@@ -1,15 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import Rating from 'react-rating-stars-component';
+import { Rating } from '@material-ui/lab';
 
 const product = ({ product }) => {
   const options = {
-    edit: false,
-    color: 'rgba(20, 20, 20, 0.2)',
-    activeColor: 'tomato',
-    size: window.innerWidth < 600 ? 12 : 15,
+    readOnly: true,
+    precision: 0.5,
     value: product.ratings,
-    isHalf: true,
+    size: 'small',
   };
   return (
     <Link className="card" to={`/product/${product._id}`}>
@@ -18,7 +16,9 @@ const product = ({ product }) => {
 
       <div>
         <Rating {...options} />
-        <span>({product.numofReviews} reviews)</span>
+        <span className="productCardSpan">
+          ({product.numofReviews} reviews)
+        </span>
       </div>
 
       <span>${product.price}</span>

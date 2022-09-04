@@ -25,23 +25,24 @@ const Shipping = () => {
   const [city, setCity] = useState(shippingAddress.city);
   const [state, setState] = useState(shippingAddress.state);
   const [country, setCountry] = useState(shippingAddress.country);
-  const [postCode, setPostCode] = useState(shippingAddress.postCode);
-  const [phoneNo, setPhoneNo] = useState(shippingAddress.phoneNo);
+  const [postalCode, setPostalCode] = useState(shippingAddress.postCode);
+  const [phone, setPhone] = useState(shippingAddress.phoneNo);
 
   const shippingSubmit = (e) => {
     e.preventDefault();
 
-    if (phoneNo.length < 10 || phoneNo.length > 10) {
+    if (phone.length < 10 || phone.length > 10) {
       toast.error('Phone Number should be 10 digits Long');
       return;
     }
+    parseInt();
     const payload = {
       address,
       city,
       state,
       country,
-      postCode,
-      phoneNo,
+      postalCode,
+      phone,
     };
     dispatch(addShipping(payload));
     navigate('/order/confirm');
@@ -90,8 +91,8 @@ const Shipping = () => {
                 type="number"
                 placeholder="Post Code"
                 required
-                value={postCode}
-                onChange={(e) => setPostCode(e.target.value)}
+                value={postalCode}
+                onChange={(e) => setPostalCode(parseInt(e.target.value))}
               />
             </div>
 
@@ -101,8 +102,8 @@ const Shipping = () => {
                 type="number"
                 placeholder="Phone Number"
                 required
-                value={phoneNo}
-                onChange={(e) => setPhoneNo(e.target.value)}
+                value={phone}
+                onChange={(e) => setPhone(parseInt(e.target.value))}
                 size="10"
               />
             </div>

@@ -16,6 +16,7 @@ const cartSlice = createSlice({
     reset: (state) => initialState,
     addToCart: (state, action) => {
       const newItem = action.payload;
+      newItem.image = newItem.image[0].url;
       const existItem = state.cartItems.find((item) => item.id === newItem.id);
       const cartItems = existItem
         ? state.cartItems.map((item) =>

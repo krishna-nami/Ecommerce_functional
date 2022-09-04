@@ -1,14 +1,16 @@
-import ErrorHandler from '../utils/errorhandler.js';
 import Stripe from 'stripe';
-const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
+import dotenv from 'dotenv';
+dotenv.config({ path: 'backend/config/config.env' });
 import catchError from '../middleware/asyncErrorsHandler.js';
+
+const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 
 export const processPayment = catchError(async (req, res, next) => {
   const myPayment = await stripe.paymentIntents.create({
     amount: req.body.amount,
     currency: 'aud',
     metadata: {
-      company: 'myEcommerce',
+      company: 'Ecommerce',
     },
   });
   res
