@@ -2,9 +2,29 @@ import Product from '../models/productModel.js';
 import ErrorHandler from '../utils/errorhandler.js';
 import catchError from '../middleware/asyncErrorsHandler.js';
 import ApiFeatures from '../utils/apifeatures.js';
+import cloudinary from 'cloudinary';
 
 //create a product --Admin only
 export const createProduct = catchError(async (req, res, next) => {
+  req.body.user = req.user.id;
+  let images = [];
+  if (typeof req.body.images === 'string') {
+    images.push(req.body.images);
+  } else {
+    images = req.body.images;
+  }
+  const imagesLinks = [];
+
+  for (let i = 0; i < images.length; i++) {
+    const result = await cloudinary.v2.uploader.upload(images[i], {
+      folder: 'products',
+    });
+    imagesLinks.push({
+      public_id: result.public_id,
+      url: result.secure_url,
+    });
+  }
+  req.body.images = imagesLinks;
   req.body.user = req.user.id;
   const product = await Product.create(req.body);
   res.status(201).json({
@@ -30,14 +50,53 @@ export const getAllProducts = catchError(async (req, res) => {
     resultPerPage,
   });
 });
+//get all products --admin
+export const getAdminProducts = catchError(async (req, res, next) => {
+  const products = await Product.find();
+
+  res.status(200).json({
+    success: true,
+    products,
+  });
+});
 //update Product--Admin
 export const updateProduct = catchError(async (req, res, next) => {
-  let product = Product.findById(req.params.id);
+  let product = await Product.findById(req.params.id);
+
   if (!product) {
-    return res.status(500).json({
+    return res.status(404).json({
       success: false,
       message: 'Product not found',
     });
+  }
+
+  //get images from frontend
+  let images = [];
+  if (typeof req.body.images === 'string') {
+    images.push(req.body.images);
+  } else {
+    images = req.body.images;
+  }
+
+  //delete images from cloudnary
+  if (images !== undefined) {
+    for (let i = 0; i < product.images.length; i++) {
+      await cloudinary.v2.uploader.destroy(product.images[i].public_id);
+    }
+
+    //upload images to cloudnary
+    const imagesLinks = [];
+
+    for (let i = 0; i < images.length; i++) {
+      const result = await cloudinary.v2.uploader.upload(images[i], {
+        folder: 'products',
+      });
+      imagesLinks.push({
+        public_id: result.public_id,
+        url: result.secure_url,
+      });
+    }
+    req.body.images = imagesLinks;
   }
   product = await Product.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
@@ -52,13 +111,19 @@ export const updateProduct = catchError(async (req, res, next) => {
 
 //delete specific product ---Admin ony
 export const deleteProduct = catchError(async (req, res, next) => {
-  let product = Product.findById(req.params.id);
+  console.log(req.params.id);
+  let product = await Product.findById(req.params.id);
   if (!product) {
     return res.status(500).json({
       success: false,
       message: 'product not found',
     });
   }
+  //deleting images form cloudinary
+  for (let i = 0; i < product.images.length; i++) {
+    await cloudinary.v2.uploader.destroy(product.images[i].public_id);
+  }
+
   product = await product.remove();
   res
     .status(200)

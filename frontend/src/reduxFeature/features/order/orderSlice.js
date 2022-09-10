@@ -7,6 +7,9 @@ const initialState = {
   isLoading: false,
   isSuccess: false,
   isError: false,
+  isDelete: false,
+  isUpdated: false,
+  totalAmount: 0,
 };
 export const createOrder = createAsyncThunk(
   'order/post',
@@ -36,6 +39,7 @@ export const viewOrders = createAsyncThunk(
     }
   }
 );
+
 export const orderDetails = createAsyncThunk(
   'order/get',
   async (id, thunkAPI) => {
@@ -50,10 +54,66 @@ export const orderDetails = createAsyncThunk(
     }
   }
 );
+
+export const getAllOrders = createAsyncThunk(
+  'orders/admin',
+  async (_, thunkAPI) => {
+    try {
+      return await orderService.adminOrders();
+    } catch (error) {
+      const message =
+        (error.respose && error.respone.data && error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+export const deleteOrder = createAsyncThunk(
+  'order/delete/admin',
+  async (id, thunkAPI) => {
+    try {
+      return await orderService.deleteAOrder(id);
+    } catch (error) {
+      const message =
+        (error.respose && error.respone.data && error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+export const updateOrder = createAsyncThunk(
+  'order/update/admin',
+  async (payload, thunkAPI) => {
+    try {
+      const id = payload.id;
+      const status = payload.myForm;
+      return await orderService.updateAOrder(id, status);
+    } catch (error) {
+      const message =
+        (error.respose && error.respone.data && error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
 const orderSlice = createSlice({
   name: 'order',
   initialState,
-  reducers: { orderReset: initialState },
+  reducers: {
+    reset_order: (state) => {
+      state.isError = false;
+      state.isLoading = false;
+      state.isSuccess = false;
+      state.message = '';
+    },
+    reset_delete: (state) => {
+      state.isDelete = false;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(createOrder.pending, (state) => {
@@ -100,8 +160,51 @@ const orderSlice = createSlice({
         state.isSuccess = false;
         state.message = action.payload;
         state.order = {};
+      })
+      .addCase(getAllOrders.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getAllOrders.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.orders = action.payload.orders;
+        state.totalAmount = action.payload.totalAmount;
+      })
+      .addCase(getAllOrders.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.isSuccess = false;
+        state.message = action.payload;
+      })
+      .addCase(deleteOrder.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(deleteOrder.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isDelete = true;
+        state.isError = false;
+      })
+      .addCase(deleteOrder.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.isSuccess = false;
+        state.message = action.payload;
+      })
+      .addCase(updateOrder.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(updateOrder.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isDelete = false;
+        state.isUpdated = true;
+        state.message = action.payload.message;
+      })
+      .addCase(updateOrder.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.isSuccess = false;
+        state.message = action.payload;
       });
   },
 });
-export const { orderReset } = orderSlice.actions;
+export const { reset_delete, reset_order } = orderSlice.actions;
 export default orderSlice.reducer;

@@ -16,7 +16,7 @@ const OrderDetails = () => {
 
   useEffect(() => {
     dispatch(orderDetails(id));
-  }, [dispatch]);
+  }, [dispatch, id]);
   return (
     <Fragment>
       {loading ? (

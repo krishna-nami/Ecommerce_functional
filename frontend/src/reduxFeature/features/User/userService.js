@@ -39,6 +39,11 @@ const logout = async () => {
   localStorage.removeItem('user');
 };
 
+const getUsers = async () => {
+  const { data } = await axios.get('/api/v1/adminLogin/users');
+  return data;
+};
+
 const userService = {
   login,
   register,
@@ -46,5 +51,6 @@ const userService = {
   update,
   loadUser,
   updatePassword,
+  getUsers,
 };
 export default userService;

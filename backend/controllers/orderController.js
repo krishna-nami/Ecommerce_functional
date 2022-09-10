@@ -87,16 +87,20 @@ export const getAllOrdersAdmin = catchError(async (req, res, next) => {
 //update order status --Admin Side
 export const updateOrderStatus = catchError(async (req, res, next) => {
   const order = await Order.findById(req.params.id);
+  console.log(req.body.status);
   if (!order) {
-    return next(new ErrorHandler('order not found', 404));
+    return next(new ErrorHandler('order not found Id', 404));
   }
 
   if (order.orderStatus === 'Delivered') {
     return next(new ErrorHandler('you have already deliverd this order', 400));
   }
-  order.orderItems.forEach(async (o) => {
-    await updateStock(o.product, o.quantity);
-  });
+
+  if (req.body.status === 'Shipped') {
+    order.orderItems.forEach(async (o) => {
+      await updateStock(o.id, o.quantity);
+    });
+  }
 
   order.orderStatus = req.body.status;
   if (req.body.status === 'Delivered') {

@@ -50,7 +50,7 @@ const Products = () => {
     'Tops',
     'Attire',
     'Camera',
-    'Mobile',
+    'SmartPhones',
     'Electronics',
   ];
   if (isError) {

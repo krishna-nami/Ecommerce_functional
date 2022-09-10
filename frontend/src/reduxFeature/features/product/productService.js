@@ -21,5 +21,33 @@ const createReview = async (reviewData) => {
   const { data } = await axios.put('/api/v1/review', reviewData);
   console.log(data);
 };
-const productService = { getProducts, getProduct, createReview };
+const getAdminProducts = async () => {
+  const { data } = await axios.get('/api/v1/adminLogin/products');
+  return data.products;
+};
+const deleteAProduct = async (id) => {
+  console.log(id);
+  const { data } = await axios.delete('/api/v1/product/' + id);
+  console.log(data);
+  return data;
+};
+const createAProduct = async (product) => {
+  const { data } = await axios.post('/api/v1/product/new', product);
+  console.log(data);
+  return data;
+};
+const updateAProduct = async (product) => {
+  let id = product.id;
+  const { data } = await axios.put('/api/v1/product/' + id, product.myForm);
+  return data;
+};
+const productService = {
+  getProducts,
+  getProduct,
+  createReview,
+  getAdminProducts,
+  deleteAProduct,
+  createAProduct,
+  updateAProduct,
+};
 export default productService;

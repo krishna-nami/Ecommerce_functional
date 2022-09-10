@@ -16,5 +16,25 @@ const orderDetails = async (id) => {
 
   return data.order;
 };
-const orderService = { createOrder, viewOrders, orderDetails };
+const adminOrders = async () => {
+  const { data } = await axios.get(`/api/v1/admin/orders`);
+  return data;
+};
+const deleteAOrder = async (id) => {
+  const { data } = await axios.delete(`/api/v1/admin/order/` + id);
+  return data;
+};
+const updateAOrder = async (id, status) => {
+  console.log(...status);
+  const { data } = await axios.put(`/api/v1/admin/order/` + id, status);
+  return data;
+};
+const orderService = {
+  createOrder,
+  viewOrders,
+  orderDetails,
+  adminOrders,
+  deleteAOrder,
+  updateAOrder,
+};
 export default orderService;

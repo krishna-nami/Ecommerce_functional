@@ -30,6 +30,13 @@ import ConfirmOrder from './components/Cart/ConfirmOrder';
 import MyOrders from './components/Cart/MyOrders';
 import OrderDetails from './components/Cart/OrderDetails';
 import Dashboard from './components/admin/Dashboard';
+import ProductList from './components/admin/ProductList';
+import UserList from './components/admin/UserList';
+import OrderList from './components/admin/OrderList';
+import Reviews from './components/admin/Reviews';
+import CreateProduct from './components/admin/CreateProduct';
+import UpdateProduct from './components/admin/UpdateProduct';
+import ProcessOrder from './components/admin/ProcessOrder';
 import axios from 'axios';
 import Payment from './components/Cart/Payment';
 import { Elements } from '@stripe/react-stripe-js';
@@ -98,6 +105,43 @@ const App = () => {
           </Route>
           <Route exact path="/admin/dashboard" element={<ProtectedRoute />}>
             <Route exact path="/admin/dashboard" element={<Dashboard />} />
+          </Route>
+          <Route exact path="/admin/products" element={<ProtectedRoute />}>
+            <Route exact path="/admin/products" element={<ProductList />} />
+          </Route>
+          <Route exact path="/admin/orders" element={<ProtectedRoute />}>
+            <Route exact path="/admin/orders" element={<OrderList />} />
+          </Route>
+          <Route exact path="/admin/users" element={<ProtectedRoute />}>
+            <Route exact path="/admin/users" element={<UserList />} />
+          </Route>
+          <Route exact path="/admin/reviews" element={<ProtectedRoute />}>
+            <Route exact path="/admin/reviews" element={<Reviews />} />
+          </Route>
+          <Route
+            exact
+            path="/admin/create/product"
+            element={<ProtectedRoute />}
+          >
+            <Route
+              exact
+              path="/admin/create/product"
+              element={<CreateProduct />}
+            />
+          </Route>
+          <Route
+            exact
+            path="/admin/update/product/:id"
+            element={<ProtectedRoute />}
+          >
+            <Route
+              exact
+              path="/admin/update/product/:id"
+              element={<UpdateProduct />}
+            />
+          </Route>
+          <Route exact path="/admin/order/" element={<ProtectedRoute />}>
+            <Route exact path="/admin/order/:id" element={<ProcessOrder />} />
           </Route>
         </Routes>
 
