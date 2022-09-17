@@ -12,6 +12,7 @@ const initialState = {
   isUpdated: false,
   productCount: '',
   resultPerPage: '',
+  reviews: [],
 };
 
 //action to get all products
@@ -128,6 +129,22 @@ export const updateProduct = createAsyncThunk(
   async (data, thunkAPI) => {
     try {
       return await productService.updateAProduct(data);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+export const getReviews = createAsyncThunk(
+  'admin/get/reviews',
+  async (id, thunkAPI) => {
+    try {
+      return await productService.reviews(id);
     } catch (error) {
       const message =
         (error.response &&
@@ -257,6 +274,20 @@ const productSlice = createSlice({
       .addCase(deleteProduct.rejected, (state, action) => {
         state.isLoading = false;
         state.isSuccess = false;
+        state.isError = true;
+        state.message = action.payload;
+      })
+      .addCase(getReviews.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+        state.message = '';
+        state.reviews = action.payload.reviews;
+      })
+      .addCase(getReviews.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = false;
+        state.isUpdated = false;
         state.isError = true;
         state.message = action.payload;
       });

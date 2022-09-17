@@ -46,6 +46,7 @@ const UpdateProduct = () => {
 
   useEffect(() => {
     dispatch(getProduct(id));
+
     if (isUpdated) {
       navigate(link);
       dispatch(reset_product());

@@ -9,8 +9,10 @@ const initialState = {
   isAuth: false,
   isUpdated: false,
   isLoading: false,
+  isUserDeleted: false,
   message: '',
   users: [],
+  aUser: {},
 };
 
 export const login = createAsyncThunk('auth/login', async (user, thunkAPI) => {
@@ -93,10 +95,60 @@ export const register = createAsyncThunk(
   }
 );
 export const getAllUsers = createAsyncThunk(
-  'admin/getUsers',
+  'admin/get/Users',
   async (_, thunkAPI) => {
     try {
       return await userService.getUsers();
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+export const deleteUser = createAsyncThunk(
+  'admin/delete/User',
+  async (id, thunkAPI) => {
+    try {
+      return await userService.deleteAUser(id);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+export const getAUser = createAsyncThunk(
+  'admin/get/User',
+  async (id, thunkAPI) => {
+    try {
+      return await userService.getUser(id);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+export const updateAUser = createAsyncThunk(
+  'admin/update/User',
+  async (payload, thunkAPI) => {
+    try {
+      const id = payload.id;
+      const user = payload.myForm;
+      return await userService.updateUser(id, user);
     } catch (error) {
       const message =
         (error.response &&
@@ -113,6 +165,14 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     reset: (state) => initialState,
+    reset_delete: (state) => {
+      state.isUserDeleted = false;
+      state.message = '';
+    },
+    reset_update: (state) => {
+      state.isUpdated = false;
+      state.message = '';
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -212,19 +272,13 @@ const authSlice = createSlice({
         state.message = action.payload;
         state.user = '';
       })
-      .addCase(getAllUsers.pending, (state) => {
-        state.isLoading = true;
-        state.isAuth = false;
-        state.isError = false;
-      })
 
       .addCase(getAllUsers.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.isAuth = true;
-        state.isUpdated = false;
         state.isError = false;
         state.message = '';
-        state.users = action.payload.users;
+
+        state.users = action.payload;
       })
       .addCase(getAllUsers.rejected, (state, action) => {
         state.isLoading = false;
@@ -232,9 +286,49 @@ const authSlice = createSlice({
         state.isError = true;
         state.message = action.payload;
         state.users = [];
+      })
+
+      .addCase(getAUser.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.message = '';
+        state.aUser = action.payload;
+      })
+      .addCase(getAUser.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isAuth = false;
+        state.isError = true;
+        state.message = action.payload;
+        state.aUSer = {};
+      })
+      .addCase(updateAUser.pending, (state) => {
+        state.isLoading = true;
+        state.isAuth = false;
+        state.isError = false;
+        state.aUSer = {};
+      })
+
+      .addCase(updateAUser.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.isUpdated = true;
+        state.message = action.payload;
+      })
+      .addCase(updateAUser.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isAuth = false;
+        state.isError = true;
+        state.message = action.payload;
+        state.aUSer = {};
+      })
+      .addCase(deleteUser.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.isUserDeleted = true;
+        state.message = action.payload;
       });
   },
 });
-export const { reset } = authSlice.actions;
+export const { reset, reset_delete, reset_update } = authSlice.actions;
 
 export default authSlice.reducer;

@@ -26,7 +26,7 @@ router.route('/myDetails').get(isAuthenticated, getUserDetails);
 router.route('/password/update').put(isAuthenticated, changePassword);
 router.route('/me/update').put(isAuthenticated, updateUserDetails);
 router
-  .route('/adminLogin/users')
+  .route('/admin/users')
   .get(isAuthenticated, authorizeduser('admin'), getAllUsers);
 router
   .route('/user/details/:id')

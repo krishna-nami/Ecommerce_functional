@@ -4,6 +4,7 @@ import './dashboard.css';
 import { useSelector, useDispatch } from 'react-redux';
 import { getAllProducts } from '../../reduxFeature/features/product/prouctSlice.js';
 import { getAllOrders } from '../../reduxFeature/features/order/orderSlice.js';
+import { getAllUsers } from '../../reduxFeature/features/User/userSlice.js';
 import { Typography } from '@material-ui/core';
 import { Link } from 'react-router-dom';
 import { Doughnut, Line } from 'react-chartjs-2';
@@ -14,6 +15,8 @@ const Dashboard = () => {
   const dispatch = useDispatch();
   const { products } = useSelector((state) => state.products);
   const { orders, totalAmount } = useSelector((state) => state.order);
+  const { users } = useSelector((state) => state.auth);
+
   let outofStock = 0;
   products &&
     products.forEach((element) => {
@@ -25,6 +28,7 @@ const Dashboard = () => {
   useEffect(() => {
     dispatch(getAllProducts());
     dispatch(getAllOrders());
+    dispatch(getAllUsers());
   }, [dispatch]);
 
   const lineState = {
@@ -66,7 +70,7 @@ const Dashboard = () => {
             </Link>
             <Link to="/admin/users">
               <p>Users</p>
-              <p>3</p>
+              <p>{users && users.length}</p>
             </Link>
             <Link to="/admin/orders">
               <p>Orders</p>

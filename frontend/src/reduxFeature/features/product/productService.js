@@ -41,6 +41,12 @@ const updateAProduct = async (product) => {
   const { data } = await axios.put('/api/v1/product/' + id, product.myForm);
   return data;
 };
+//get all reviews for the product
+const reviews = async (id) => {
+  const { data } = await axios.get(`/api/v1/reviews?id=${id}`);
+  console.log(data);
+  return data;
+};
 const productService = {
   getProducts,
   getProduct,
@@ -49,5 +55,6 @@ const productService = {
   deleteAProduct,
   createAProduct,
   updateAProduct,
+  reviews,
 };
 export default productService;

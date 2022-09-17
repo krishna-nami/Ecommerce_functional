@@ -33,10 +33,12 @@ import Dashboard from './components/admin/Dashboard';
 import ProductList from './components/admin/ProductList';
 import UserList from './components/admin/UserList';
 import OrderList from './components/admin/OrderList';
-import Reviews from './components/admin/Reviews';
+
 import CreateProduct from './components/admin/CreateProduct';
 import UpdateProduct from './components/admin/UpdateProduct';
 import ProcessOrder from './components/admin/ProcessOrder';
+import UpdateUser from './components/admin/UpdateUser';
+import ProductReviews from './components/admin/ProductReviews';
 import axios from 'axios';
 import Payment from './components/Cart/Payment';
 import { Elements } from '@stripe/react-stripe-js';
@@ -115,9 +117,7 @@ const App = () => {
           <Route exact path="/admin/users" element={<ProtectedRoute />}>
             <Route exact path="/admin/users" element={<UserList />} />
           </Route>
-          <Route exact path="/admin/reviews" element={<ProtectedRoute />}>
-            <Route exact path="/admin/reviews" element={<Reviews />} />
-          </Route>
+
           <Route
             exact
             path="/admin/create/product"
@@ -143,6 +143,12 @@ const App = () => {
           <Route exact path="/admin/order/" element={<ProtectedRoute />}>
             <Route exact path="/admin/order/:id" element={<ProcessOrder />} />
           </Route>
+          <Route exact path="/admin/user/" element={<ProtectedRoute />}>
+            <Route exact path="/admin/user/:id" element={<UpdateUser />} />
+          </Route>
+          <Route exact path="/admin/reviews" element={<ProtectedRoute />}>
+            <Route exact path="/admin/reviews" element={<ProductReviews />} />
+          </Route>
         </Routes>
 
         {stripeKey && (
@@ -157,7 +163,7 @@ const App = () => {
 
         <Footer />
       </Router>
-      <ToastContainer limit={2} />
+      <ToastContainer limit={1} />
     </div>
   );
 };

@@ -40,8 +40,23 @@ const logout = async () => {
 };
 
 const getUsers = async () => {
-  const { data } = await axios.get('/api/v1/adminLogin/users');
-  return data;
+  const { data } = await axios.get('/api/v1/admin/users');
+
+  return data.users;
+};
+const deleteAUser = async (id) => {
+  const { data } = await axios.delete('/api/v1/user/details/' + id);
+
+  return data.message;
+};
+const getUser = async (id) => {
+  const { data } = await axios.get('/api/v1/user/details/' + id);
+  return data.user;
+};
+const updateUser = async (id, user) => {
+  const { data } = await axios.put('/api/v1/user/details/' + id, user);
+
+  return data.message;
 };
 
 const userService = {
@@ -52,5 +67,8 @@ const userService = {
   loadUser,
   updatePassword,
   getUsers,
+  deleteAUser,
+  getUser,
+  updateUser,
 };
 export default userService;
